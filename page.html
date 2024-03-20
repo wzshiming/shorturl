@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Demo Short URL</title>
+</head>
+<body>
+<h1>Demo Short URL</h1>
+
+Typing the URL you want to shorten in the input box below, and then click the "Shorten" button.<br/>
+The shortened URL will be displayed below.<br/>
+<br/>
+
+<form id="short-url" action=%q method="post">
+  <label for="input-url">URL: </label><input type="text" id="input-url" name="url" placeholder="Enter your URL here" value="https://">
+  <input type="submit" value="Shorten">
+</form>
+<br/>
+
+<code>curl -X POST %q -d url=<var id="sync-url">http://example.org</var></code>
+<br/>
+
+<p id="result-area" hidden="hidden">
+  Converted from<br/>
+  <a id="origin" target="_blank" rel="noreferrer"></a><br/>
+  to<br/>
+  <a id="result" target="_blank" rel="noreferrer"></a> <button id="copy-button">Copy</button>
+</p>
+
+<script>
+    let inputUrl = document.getElementById('input-url');
+    let syncUrl = document.getElementById('sync-url');
+    let shortUrl = document.getElementById('short-url');
+    let copyButton = document.getElementById('copy-button');
+
+    let resultArea = document.getElementById('result-area');
+    let origin = document.getElementById('origin');
+    let result = document.getElementById('result');
+
+    inputUrl.oninput = function() {
+        syncUrl.innerHTML = this.value;
+    }
+
+    shortUrl.onsubmit = function(event) {
+        event.preventDefault();
+
+        let xhr = new XMLHttpRequest();
+
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                origin.innerHTML = inputUrl.value;
+                origin.href = inputUrl.value;
+                result.innerHTML = xhr.responseText;
+                result.href = xhr.responseText;
+
+                resultArea.removeAttribute('hidden');
+            }
+        };
+
+        xhr.open('POST', this.action);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        let data = 'url=' + encodeURIComponent(inputUrl.value);
+
+        xhr.send(data);
+    };
+
+    copyButton.onclick = function() {
+        let range = document.createRange();
+        range.selectNode(result);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+    };
+</script>
+</body>
+</html>
