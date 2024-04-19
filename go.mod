@@ -3,7 +3,7 @@ module github.com/wzshiming/shorturl
 go 1.20
 
 require (
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 	modernc.org/sqlite v1.28.0
 )
 
